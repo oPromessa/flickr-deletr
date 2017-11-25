@@ -50,12 +50,11 @@ script:
   
   - coverage combine
   - coverage report -m delete.py
-  - sleep 5
 
 # pytest --flakes (Code analysis) ---------------------------------------------
   - pytest -v --flakes
-#  - pytest -v # or py.test for Python versions 3.5 and below
-  - pytest --doctest-modules # Attempt to run test_*.txt with doctest
+  #- pytest -v # or py.test for Python versions 3.5 and below
+  #- pytest --doctest-modules # Attempt to run test_*.txt with doctest
 
 # Deleted Pics Non existant on FLickr -----------------------------------------
 # For testing a local deleted file also not available in flickr
