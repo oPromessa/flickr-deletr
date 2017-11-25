@@ -2,7 +2,7 @@
 
 """
     by oPromessa, 2017
-    Published on https://github.com/oPromessa/flickr-uploader/
+    Published on https://github.com/oPromessa/flickr-deletr/
 
     THIS SCRIPT IS PROVIDED WITH NO WARRANTY WHATSOEVER.
     PLEASE REVIEW THE SOURCE CODE TO MAKE SURE IT WILL WORK FOR YOUR NEEDS.
@@ -164,7 +164,7 @@ def niceprint(s):
             nutime.strftime(UPLDRConstants.TimeFormat),
             os.getpid(),
             'PRINT',
-            'uploadr',
+            'deletr',
             s.encode('utf-8') if isThisStringUnicode(s) else s))
 
 #==============================================================================
@@ -194,7 +194,7 @@ try:
     TOKEN_CACHE = eval(config.get('Config', 'TOKEN_CACHE'))
 # CODING: Should extend this control to other parameters (Enhancement #7)
 except (ConfigParser.NoOptionError, ConfigParser.NoOptionError), err:
-    sys.stderr.write('[{!s}]:[{!s}][WARNING ]:[uploadr] ({!s}) TOKEN_CACHE '
+    sys.stderr.write('[{!s}]:[{!s}][WARNING ]:[deletr] ({!s}) TOKEN_CACHE '
                      'not defined or incorrect on INI file: [{!s}]. '
                      'Assuming default value [{!s}].\n'
                      .format(nutime.strftime(UPLDRConstants.TimeFormat),
@@ -241,7 +241,7 @@ if (int(LOGGING_LEVEL) if str.isdigit(LOGGING_LEVEL) else 99) not in [
                         logging.ERROR,
                         logging.CRITICAL]:
     LOGGING_LEVEL = logging.WARNING
-    sys.stderr.write('[{!s}]:[WARNING ]:[uploadr] LOGGING_LEVEL '
+    sys.stderr.write('[{!s}]:[WARNING ]:[deletr] LOGGING_LEVEL '
                      'not defined or incorrect on INI file: [{!s}]. '
                      'Assuming WARNING level.\n'.format(
                             nutime.strftime(UPLDRConstants.TimeFormat),
