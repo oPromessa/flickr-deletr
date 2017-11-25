@@ -71,21 +71,15 @@
 # Import section
 #
 # Check if it is still required
-import httplib
 import sys
 import argparse
-import mimetools
-import mimetypes
 import os
 import time
 import sqlite3 as lite
 import hashlib
 import fcntl
 import errno
-import subprocess
-import re
 import ConfigParser
-import multiprocessing
 import flickrapi
 import xml
 import os.path
