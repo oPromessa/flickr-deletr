@@ -694,15 +694,13 @@ class Uploadr:
     #         secret="b123456" server="2" title="test_03"
     #         ispublic="0" isfriend="1" isfamily="1" />
     # </photos>
-    def photos_searchDELETE(self, checksum):
+    def photos_searchDELETE(self):
         """
             photos_search
-            Searchs for image with on tag:checksum
+            Searchs for images to delete.
         """
 
         global nuflickr
-
-        logging.info('checksum:{!s}:'.format(checksum))
 
         # CODING EXTREME
             
@@ -751,23 +749,6 @@ class Uploadr:
                 
             print('next page:[{!s}]'.format(pg))
                 
-            # logging.info('Output for {!s}:'.format('deleteResp'))
-            # logging.info(xml.etree.ElementTree.tostring(
-            #                         deleteResp,
-            #                         encoding='utf-8',
-            #                         method='xml'))
-
-        # searchResp = nuflickr.photos.search(tags='checksum:{}'
-        #                                     .format(checksum))
-        
-
-        # Debug
-        # logging.debug('Search Results SearchResp:')
-        # logging.debug(xml.etree.ElementTree.tostring(
-        #                                     searchResp,
-        #                                     encoding='utf-8',
-        #                                     method='xml'))
-
         tot = None
         id = None
         if self.isGood(searchResp):
@@ -955,7 +936,7 @@ if __name__ == "__main__":
         flick.authenticate()
 
     # CODING: EXTREME
-    res, t, i = flick.photos_searchDELETE('f5feeae3541ecff04a7a145d9919b4c0')
+    res, t, i = flick.photos_searchDELETE()
     print('res=',res)
     print('t=',t)
     print('i=',i)
