@@ -1,0 +1,68 @@
+# =============================================================================
+# language
+language: python
+python:
+  - "2.7"
+#  - "3.6"
+# nightly gets the latest nightly version of python... python 3 in the case. For now I don't want that!
+#  - "nightly"
+
+# =============================================================================
+# command to install dependencies
+#install:
+#  - pip install -r requirements.txt
+# command to run tests
+
+# =============================================================================
+# env
+env:
+  global:
+    - PYTHONPATH=..:.
+    - LC_ALL=en_US.utf8
+    - LANG=en_US.utf8
+# Set to -v for Verbose option of uploadr
+    - VerboseVar=-v    
+  matrix:
+# TestScenario: Help, DryRun, BadFiles, MultiProcessing, Remove, Replace, RemoveReplace
+# Delete
+    - TestScenario=Delete DeletrOptions="$VerboseVar"
+
+# =============================================================================
+# before_script
+# Get database token ready
+# Get uploadr.ini from tests
+# Use environment secure variable for private settings
+before_script:
+  - pwd
+#  - ls -laR
+  - cp tests/uploadr.ini .
+  - cp tests/uploadr.ini /home/travis/virtualenv/python2.7.13/bin/uploadr.ini
+  - grep FILES_DIR uploadr.ini
+#  - cat uploadr.ini
+  - echo "INSERT INTO oauth_tokens ( api_key, lookup_key, oauth_token, oauth_token_secret, access_level, fullname, username, user_nsid) VALUES ( '"$api_key"', '', '"$oauth_token"', '"$oauth_token_secret"', 'delete', '"$fullname"', '"$username"', '"$user_nsid"');" | sqlite3 token/oauth-tokens.sqlite
+  - sqlite3 token/oauth-tokens.sqlite 'SELECT * FROM oauth_tokens;'
+  
+# =============================================================================
+# run script for tests  
+script:
+# First RUN -------------------------------------------------------------------
+  - coverage run -a --concurrency multiprocessing delete.py $VerboseVar $UploadrOptions
+  
+  - coverage combine
+  - coverage report -m delete.py
+  - sleep 5
+
+# pytest --flakes (Code analysis) ---------------------------------------------
+  - pytest -v --flakes
+#  - pytest -v # or py.test for Python versions 3.5 and below
+  - pytest --doctest-modules # Attempt to run test_*.txt with doctest
+
+# Deleted Pics Non existant on FLickr -----------------------------------------
+# For testing a local deleted file also not available in flickr
+# - sleep 10
+# Test Deleted file
+#  - coverage run -a uploadr.py $VerboseVar -bl 10  
+#  - coverage report -m uploadr.py
+#  - sqlite3 flickrdb "SELECT *, datetime( last_modified, 'unixepoch', 'localtime') FROM files;"
+
+after_script:
