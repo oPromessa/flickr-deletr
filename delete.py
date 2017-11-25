@@ -131,9 +131,6 @@ class UPLDRConstants:
 # Global Variables
 #   nutime      = for working with time module (import time)
 #   nuflickr    = object for flickr API module (import flickrapi)
-#   nulockDB    = multiprocessing Lock for access to Database
-#   numutex     = multiprocessing mutex to control access to value nurunning
-#   nurunning   = multiprocessing Value to count processed photos
 nutime = time
 nuflickr = None
 
