@@ -79,7 +79,10 @@ import sqlite3 as lite
 import hashlib
 import fcntl
 import errno
-import ConfigParser
+try:
+    import ConfigParser as ConfigParser # Python 2
+except ImportError:
+    import configparser as ConfigParser # Python 3
 import flickrapi
 import xml
 import os.path
