@@ -1,3 +1,0 @@
-Another one... with CRLF
-One line with CRLF
-Second line with CRLF
