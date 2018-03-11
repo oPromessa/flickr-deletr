@@ -144,12 +144,18 @@ def isThisStringUnicode(s):
         print(u'File ' + file.encode('utf-8') + u'...') \
               if isThisStringUnicode(file) else ("File " + file + "...")
     """
-    if isinstance(s, unicode):  # noqa
-        return True
+    if sys.version_info < (3, ):
+        if isinstance(s, unicode):  # noqa
+            return True
+        elif isinstance(s, str):
+            return False
+        else:
+            return False
     elif isinstance(s, str):
         return False
     else:
         return False
+    
 
 # -----------------------------------------------------------------------------
 # niceprint
