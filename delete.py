@@ -144,7 +144,7 @@ def isThisStringUnicode(s):
         print(u'File ' + file.encode('utf-8') + u'...') \
               if isThisStringUnicode(file) else ("File " + file + "...")
     """
-    if isinstance(s, unicode):
+    if isinstance(s, unicode):  # noqa
         return True
     elif isinstance(s, str):
         return False
@@ -351,7 +351,7 @@ class Uploadr:
         print(authorize_url)
 
         # Prompt for verifier code from the user
-        verifier = unicode(raw_input('Verifier code: '))
+        verifier = unicode(raw_input('Verifier code: '))  # noqa
 
         if LOGGING_LEVEL <= logging.WARNING:
             logging.warning('Verifier: {!s}'.format(verifier))
