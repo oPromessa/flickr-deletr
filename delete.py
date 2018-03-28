@@ -90,7 +90,7 @@ import logging
 import pprint
 
 
-#==============================================================================
+# =============================================================================
 # Init code
 #
 # Python version must be greater than 2.7 for this script to run
@@ -182,7 +182,7 @@ def niceprint(s):
         s.encode('utf-8') if isThisStringUnicode(s) else s))
 
 
-#==============================================================================
+# =============================================================================
 # Read Config from config.ini file
 # Obtain configuration from uploadr.ini
 # Refer to contents of uploadr.ini for explanation on configuration parameters
@@ -226,7 +226,7 @@ LOGGING_LEVEL = (config.get('Config', 'LOGGING_LEVEL')
                  if config.has_option('Config', 'LOGGING_LEVEL')
                  else logging.WARNING)
 
-#==============================================================================
+# =============================================================================
 # Logging
 #
 # Obtain configuration level from Configuration file.
@@ -269,7 +269,7 @@ logging.basicConfig(stream=sys.stderr,
                     datefmt=UPLDRConstants.TimeFormat,
                     format='[%(asctime)s]:[%(processName)s][%(levelname)-8s]'
                            ':[%(name)s] %(message)s')
-#==============================================================================
+# =============================================================================
 # Test section for logging.
 # CODING: Uncomment for testing.
 #   Only applicable if LOGGING_LEVEL is INFO or below (DEBUG, NOTSET)
@@ -292,7 +292,7 @@ if LOGGING_LEVEL <= logging.INFO:
         'FLICKR Configuration:'))
     pprint.pprint(FLICKR)
 
-#==============================================================================
+# =============================================================================
 # CODING: Search 'Main code' section for code continuation after definitions
 
 # ----------------------------------------------------------------------------
@@ -445,7 +445,7 @@ class Uploadr:
                 logging.warning('Authentication required.')
                 return False
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # removeDeleteMedia
     #
     # Remove files deleted at the local source
@@ -493,7 +493,7 @@ class Uploadr:
 
         niceprint('*****Completed deleted files*****')
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # deletefile
     #
     # When EXCLUDED_FOLDERS defintion changes. You can run the -g
@@ -558,7 +558,7 @@ class Uploadr:
             print(str(sys.exc_info()))
         return success
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # isGood
     #
     def isGood(self, res):
@@ -573,7 +573,7 @@ class Uploadr:
         else:
             return False
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # reportError
     #
     def reportError(self, res):
@@ -585,7 +585,7 @@ class Uploadr:
         except BaseException:
             print("ReportError: " + str(res))
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # run
     #
     # run in daemon mode. runs upload every SLEEP_TIME
@@ -606,7 +606,7 @@ class Uploadr:
                             .format(SLEEP_TIME))
             nutime.sleep(SLEEP_TIME)
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # setupDB
     #
     # Creates the control database
@@ -681,7 +681,7 @@ class Uploadr:
         finally:
             niceprint('Completed database setup')
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # md5Checksum
     #
     def md5Checksum(self, filePath):
@@ -697,7 +697,7 @@ class Uploadr:
                 m.update(data)
             return m.hexdigest()
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # photos_searchDELETE
     #
     # Searchs for image with on tag:checksum (calls Flickr photos.search)
@@ -783,7 +783,7 @@ class Uploadr:
 
         return (searchResp, tot, id)
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # people_get_photos
     #
     #   Local Wrapper for Flickr people.getPhotos
@@ -798,7 +798,7 @@ class Uploadr:
                                                   per_page=1)
         return getPhotosResp
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # photos_get_not_in_set
     #
     #   Local Wrapper for Flickr photos.getNotInSet
@@ -814,7 +814,7 @@ class Uploadr:
 
         return notinsetResp
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # photos_add_tags
     #
     #   Local Wrapper for Flickr photos.addTags
@@ -830,7 +830,7 @@ class Uploadr:
                                                       tags=tags)
         return photos_add_tagsResp
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # photos_get_info
     #
     #   Local Wrapper for Flickr photos.getInfo
@@ -846,7 +846,7 @@ class Uploadr:
 
         return photos_get_infoResp
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # photos_remove_tag
     #
     #   Local Wrapper for Flickr photos.removeTag
@@ -867,7 +867,7 @@ class Uploadr:
 
         return removeTagResp
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # photos_set_dates
     #
     # Update Date/Time Taken on Flickr for Video files
@@ -888,7 +888,7 @@ class Uploadr:
 
         return respDate
 
-#==============================================================================
+# =============================================================================
 # Main code
 #
 # nutime = time
