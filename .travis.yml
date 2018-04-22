@@ -20,7 +20,7 @@ env:
     - PYTHONPATH=..:.
     - LC_ALL=en_US.utf8
     - LANG=en_US.utf8
-# Set to -v for Verbose option of uploadr
+# Set to -v for Verbose option of deletr
     - VerboseVar=-v    
   matrix:
 # TestScenario: Help, DryRun, BadFiles, MultiProcessing, Remove, Replace, RemoveReplace
@@ -30,17 +30,17 @@ env:
 # =============================================================================
 # before_script
 # Get database token ready
-# Get uploadr.ini from tests
+# Get deletr.ini from tests
 # Use environment secure variable for private settings
 before_script:
   - pwd
   - pythonVersion=`python -V 2>&1 | cut -d\  -f2`
   - echo $pythonVersion
 #  - ls -laR
-  - cp tests/uploadr.ini .
-  - cp tests/uploadr.ini /home/travis/virtualenv/python$pythonVersion/bin/uploadr.ini
-  - grep FILES_DIR uploadr.ini
-#  - cat uploadr.ini
+  - cp tests/deletr.ini .
+  - cp tests/deletr.ini /home/travis/virtualenv/python$pythonVersion/bin/deletr.ini
+  - grep FILES_DIR deletr.ini
+#  - cat deletr.ini
   - echo "INSERT INTO oauth_tokens ( api_key, lookup_key, oauth_token, oauth_token_secret, access_level, fullname, username, user_nsid) VALUES ( '"$api_key"', '', '"$oauth_token"', '"$oauth_token_secret"', 'delete', '"$fullname"', '"$username"', '"$user_nsid"');" | sqlite3 token/oauth-tokens.sqlite
   - sqlite3 token/oauth-tokens.sqlite 'SELECT * FROM oauth_tokens;'
   
