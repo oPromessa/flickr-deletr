@@ -166,12 +166,12 @@ def isThisStringUnicode(s):
 # niceprint
 #
 # Print a message with the format:
-#   [2017.10.25 22:32:03]:[PRINT   ]:[uploadr] Some Message
+#   [2017.10.25 22:32:03]:[PRINT   ]:[deletr] Some Message
 #
 def niceprint(s):
     """
     Print a message with the format:
-        [2017.10.25 22:32:03]:[PID]:[PRINT   ]:[uploadr] Some Message
+        [2017.10.25 22:32:03]:[PID]:[PRINT   ]:[deletr] Some Message
         Accounts for UTF-8 Messages
     """
     print('[{!s}]:[{!s}][{!s:8s}]:[{!s}] {!s}'.format(
@@ -184,18 +184,18 @@ def niceprint(s):
 
 # =============================================================================
 # Read Config from config.ini file
-# Obtain configuration from uploadr.ini
-# Refer to contents of uploadr.ini for explanation on configuration parameters
+# Obtain configuration from deletr.ini
+# Refer to contents of deletr.ini for explanation on configuration parameters
 config = ConfigParser.ConfigParser()
 INIFiles = config.read(os.path.join(os.path.dirname(sys.argv[0]),
-                                    "uploadr.ini"))
+                                    "deletr.ini"))
 if not INIFiles:
-    sys.stderr.write('[{!s}]:[{!s}][ERROR   ]:[uploadr] '
+    sys.stderr.write('[{!s}]:[{!s}][ERROR   ]:[deletr] '
                      'INI file: [{!s}] not found!.\n'
                      .format(nutime.strftime(UPLDRConstants.TimeFormat),
                              os.getpid(),
                              os.path.join(os.path.dirname(sys.argv[0]),
-                                          'uploadr.ini')))
+                                          'deletr.ini')))
     sys.exit()
 if config.has_option('Config', 'FILES_DIR'):
     FILES_DIR = eval(config.get('Config', 'FILES_DIR'))
@@ -216,7 +216,7 @@ except (ConfigParser.NoOptionError, ConfigParser.NoOptionError) as err:
                              os.getpid(),
                              str(err),
                              os.path.join(os.path.dirname(sys.argv[0]),
-                                          "uploadr.ini"),
+                                          "deletr.ini"),
                              os.path.join(os.path.dirname(sys.argv[0]),
                                           "token")))
     TOKEN_CACHE = os.path.join(os.path.dirname(sys.argv[0]), "token")
@@ -261,7 +261,7 @@ if (int(LOGGING_LEVEL) if str.isdigit(LOGGING_LEVEL) else 99) not in [
                      'Assuming WARNING level.\n'.format(
                          nutime.strftime(UPLDRConstants.TimeFormat),
                          os.path.join(os.path.dirname(sys.argv[0]),
-                                      "uploadr.ini")))
+                                      "deletr.ini")))
 # Force conversion of LOGGING_LEVEL into int() for later use in conditionals
 LOGGING_LEVEL = int(LOGGING_LEVEL)
 logging.basicConfig(stream=sys.stderr,
@@ -910,8 +910,8 @@ if __name__ == "__main__":
             sys.exit(-1)
         raise
     parser = argparse.ArgumentParser(
-        description='Upload files to Flickr. '
-        'Uses uploadr.ini as config file.'
+        description='Delete files from Flickr. '
+        'Uses deletr.ini as config file.'
     )
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='Provides some more verbose output. '
@@ -934,19 +934,19 @@ if __name__ == "__main__":
     logging.warning('FILES_DIR: [{!s}]'.format(FILES_DIR))
     if FILES_DIR == "":
         niceprint('Please configure the name of the folder [FILES_DIR] '
-                  'in the INI file [normally uploadr.ini], '
+                  'in the INI file [normally deletr.ini], '
                   'with media available to sync with Flickr.')
         sys.exit()
     else:
         if not os.path.isdir(FILES_DIR):
             niceprint('Please configure the name of an existant folder '
-                      'in the INI file [normally uploadr.ini] '
+                      'in the INI file [normally deletr.ini] '
                       'with media available to sync with Flickr.')
             sys.exit()
 
     if FLICKR["api_key"] == "" or FLICKR["secret"] == "":
         niceprint('Please enter an API key and secret in the configuration '
-                  'script file, normaly uploadr.ini (see README).')
+                  'script file, normaly deletr.ini (see README).')
         sys.exit()
 
     # Instantiate class Uploadr
