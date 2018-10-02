@@ -66,6 +66,11 @@
     ## Q&A
 
 """
+# =============================================================================
+# Import section for Python 2 and 3 compatible code
+# from __future__ import absolute_import, division, print_function,
+#    unicode_literals
+from __future__ import division    # This way: 3 / 2 == 1.5; 3 // 2 == 1
 
 # ----------------------------------------------------------------------------
 # Import section
@@ -88,6 +93,7 @@ import xml
 import os.path
 import logging
 import pprint
+import math
 
 
 # =============================================================================
@@ -731,7 +737,16 @@ class Uploadr:
 
         globalcounter = 0
         curcounter = 0
-        for pg in range(180):
+
+        searchResp = nuflickr.photos.search(user_id="me", per_page=250)
+        if not (self.isGood(searchResp)):
+            sys.exit(-1)
+        xfoundpics = searchResp.find('photos').attrib['total']
+        xcalcd = math.ceil(int(xfoundpics)/250)
+        print('total of pics = [{!s}] calcd pages = [{!s}]'
+              .format(xfoundpics, xcalcd))
+
+        for pg in range(xcalcd):
 
             print('page=[{!s}]'.format(pg))
             searchResp = nuflickr.photos.search(user_id="me", per_page=250)
