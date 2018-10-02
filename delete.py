@@ -742,7 +742,7 @@ class Uploadr:
         if not (self.isGood(searchResp)):
             sys.exit(-1)
         xfoundpics = searchResp.find('photos').attrib['total']
-        xcalcd = math.ceil(int(xfoundpics)/250)
+        xcalcd = int(math.ceil(int(xfoundpics)/250))
         print('total of pics = [{!s}] calcd pages = [{!s}]'
               .format(xfoundpics, xcalcd))
 
