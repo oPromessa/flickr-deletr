@@ -389,7 +389,7 @@ class Uploadr:
                 'Check Authentication',
                 'delete',
                 nuflickr.token_valid(perms='delete')))
-            logging.critical('Token Cache: {!s}', nuflickr.token_cache.token)
+            logging.critical('Token Cache: %s', nuflickr.token_cache.token)
 
     # -------------------------------------------------------------------------
     # getCachedToken
