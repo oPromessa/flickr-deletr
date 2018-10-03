@@ -88,13 +88,13 @@ try:
     import ConfigParser as ConfigParser  # Python 2
 except ImportError:
     import configparser as ConfigParser  # Python 3
-import flickrapi
 import xml
 import os.path
 import logging
 import pprint
 import math
 
+import flickrapi
 
 # =============================================================================
 # Init code
@@ -386,9 +386,9 @@ class Uploadr:
 
         if LOGGING_LEVEL <= logging.WARNING:
             logging.critical('%s with %s permissions: %s',
-                'Check Authentication',
-                'delete',
-                nuflickr.token_valid(perms='delete'))
+                             'Check Authentication',
+                             'delete',
+                             nuflickr.token_valid(perms='delete'))
             logging.critical('Token Cache: %s', nuflickr.token_cache.token)
 
     # -------------------------------------------------------------------------
@@ -404,7 +404,7 @@ class Uploadr:
         global nuflickr
 
         logging.info('Obtaining Cached token')
-        logging.debug('TOKEN_CACHE:[%S]', TOKEN_CACHE)
+        logging.debug('TOKEN_CACHE:[%s]', TOKEN_CACHE)
         nuflickr = flickrapi.FlickrAPI(FLICKR["api_key"],
                                        FLICKR["secret"],
                                        token_cache_location=TOKEN_CACHE)
@@ -607,7 +607,7 @@ class Uploadr:
         """
 
         logging.warning('Running in Daemon mode.')
-        while (True):
+        while True:
             niceprint('Running in Daemon mode. Execute at [{!s}].'
                       .format(nutime.strftime(UPLDRConstants.TimeFormat)))
             # run upload
@@ -791,15 +791,15 @@ class Uploadr:
             print('next page:[{!s}]'.format(pg))
 
         tot = None
-        id = None
+        idpic = None
         if self.isGood(searchResp):
             if int(searchResp.find('photos').attrib['total']) == 0:
                 tot = int(searchResp.find('photos').attrib['total'])
                 if int(searchResp.find('photos').attrib['total']) == 1:
-                    id = searchResp.find('photos').findall(
+                    idpic = searchResp.find('photos').findall(
                         'photo')[0].attrib['id']
 
-        return (searchResp, tot, id)
+        return (searchResp, tot, idpic)
 
     # -------------------------------------------------------------------------
     # people_get_photos
