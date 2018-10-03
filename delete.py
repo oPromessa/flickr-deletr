@@ -335,13 +335,13 @@ class Uploadr:
         """
 
         if not total:
-            if (count % 100 == 0):
+            if count % 100 == 0:
                 niceprint('\t' +
                           str(count) +
                           ' files processed (uploaded, md5ed '
                           'or timestamp checked)')
         else:
-            if (count % 100 > 0):
+            if count % 100 > 0:
                 niceprint('\t' +
                           str(count) +
                           ' files processed (uploaded, md5ed '
@@ -379,16 +379,16 @@ class Uploadr:
             else input('Verifier code (NNN-NNN-NNN): ')
 
         if LOGGING_LEVEL <= logging.WARNING:
-            logging.warning('Verifier: {!s}'.format(verifier))
+            logging.warning('Verifier: %s', verifier)
 
         # Trade the request token for an access token
         print(nuflickr.get_access_token(verifier))
 
         if LOGGING_LEVEL <= logging.WARNING:
-            logging.critical('{!s} with {!s} permissions: {!s}'.format(
+            logging.critical('%s with %s permissions: %s',
                 'Check Authentication',
                 'delete',
-                nuflickr.token_valid(perms='delete')))
+                nuflickr.token_valid(perms='delete'))
             logging.critical('Token Cache: %s', nuflickr.token_cache.token)
 
     # -------------------------------------------------------------------------
@@ -404,7 +404,7 @@ class Uploadr:
         global nuflickr
 
         logging.info('Obtaining Cached token')
-        logging.debug('TOKEN_CACHE:[{!s}]'.format(TOKEN_CACHE))
+        logging.debug('TOKEN_CACHE:[%S]', TOKEN_CACHE)
         nuflickr = flickrapi.FlickrAPI(FLICKR["api_key"],
                                        FLICKR["secret"],
                                        token_cache_location=TOKEN_CACHE)
@@ -414,8 +414,8 @@ class Uploadr:
             # if permissions are correct?
             if nuflickr.token_valid(perms='delete'):
                 if LOGGING_LEVEL <= logging.INFO:
-                    logging.info('Cached token obtained: {!s}'
-                                 .format(nuflickr.token_cache.token))
+                    logging.info('Cached token obtained: %',
+                                 nuflickr.token_cache.token)
                 return nuflickr.token_cache.token
             else:
                 logging.info('Token Non-Existant.')
@@ -441,10 +441,10 @@ class Uploadr:
         """
         global nuflickr
 
-        logging.warning('checkToken is (self.token is None):[{!s}]'
-                        .format(self.token is None))
+        logging.warning('checkToken is (self.token is None):[%s]',
+                        self.token is None)
 
-        if (self.token is None):
+        if self.token is None:
             return False
         else:
             nuflickr = flickrapi.FlickrAPI(FLICKR["api_key"],
@@ -473,9 +473,9 @@ class Uploadr:
         niceprint('*****Removing deleted files*****')
 
         # XXX MSP Changed from self to flick
-        # if (not self.checkToken()):
+        # if not self.checkToken():
         #     self.authenticate()
-        if (not flick.checkToken()):
+        if not flick.checkToken():
             flick.authenticate()
         con = lite.connect(DB_PATH)
         con.text_factory = str
@@ -489,13 +489,13 @@ class Uploadr:
 
             count = 0
             for row in rows:
-                if (not os.path.isfile(row[1].decode('utf-8'))):
+                if not os.path.isfile(row[1].decode('utf-8')):
                     success = self.deleteFile(row, cur)
-                    logging.warning('deleteFile result: {!s}'.format(success))
+                    logging.warning('deleteFile result: %s', success)
                     count = count + 1
-                    if (count % 3 == 0):
+                    if count % 3 == 0:
                         niceprint('\t' + str(count) + ' files removed...')
-            if (count % 100 > 0):
+            if count % 100 > 0:
                 niceprint('\t' + str(count) + ' files removed.')
 
         # Closing DB connection
@@ -533,12 +533,12 @@ class Uploadr:
         try:
             deleteResp = nuflickr.photos.delete(
                 photo_id=str(file[0]))
-            logging.info('Output for {!s}:'.format('deleteResp'))
+            logging.info('Output for deleteResp:')
             logging.info(xml.etree.ElementTree.tostring(
                 deleteResp,
                 encoding='utf-8',
                 method='xml'))
-            if (self.isGood(deleteResp)):
+            if self.isGood(deleteResp):
                 # Find out if the file is the last item in a set, if so,
                 # remove the set from the local db
                 cur.execute("SELECT set_id FROM files WHERE files_id = ?",
@@ -547,7 +547,7 @@ class Uploadr:
                 cur.execute("SELECT set_id FROM files WHERE set_id = ?",
                             (row[0],))
                 rows = cur.fetchall()
-                if (len(rows) == 1):
+                if len(rows) == 1:
                     niceprint('File is the last of the set, '
                               'deleting the set ID: ' + str(row[0]))
                     cur.execute("DELETE FROM sets WHERE set_id = ?", (row[0],))
@@ -557,7 +557,7 @@ class Uploadr:
                 niceprint("Successful deletion.")
                 success = True
             else:
-                if (res['code'] == 1):
+                if res['code'] == 1:
                     # File already removed from Flicker
                     cur.execute("DELETE FROM files WHERE files_id = ?",
                                 (file[0],))
@@ -577,9 +577,9 @@ class Uploadr:
 
             Returns true if attrib['stat'] == "ok" for a given XML object
         """
-        if (res is None):
+        if res is None:
             return False
-        elif (not res == "" and res.attrib['stat'] == "ok"):
+        elif not res == "" and res.attrib['stat'] == "ok":
             return True
         else:
             return False
@@ -613,8 +613,8 @@ class Uploadr:
             # run upload
             self.upload()
             niceprint("Last check: " + str(nutime.asctime(time.localtime())))
-            logging.warning('Running in Daemon mode. Sleep [{!s}] seconds.'
-                            .format(SLEEP_TIME))
+            logging.warning('Running in Daemon mode. Sleep [%s] seconds.',
+                            SLEEP_TIME)
             nutime.sleep(SLEEP_TIME)
 
     # -------------------------------------------------------------------------
@@ -651,7 +651,7 @@ class Uploadr:
             cur = con.cursor()
             cur.execute('PRAGMA user_version')
             row = cur.fetchone()
-            if (row[0] == 0):
+            if row[0] == 0:
                 # Database version 1
                 niceprint('Adding last_modified column to database')
                 cur = con.cursor()
@@ -662,7 +662,7 @@ class Uploadr:
                 cur = con.cursor()
                 cur.execute('PRAGMA user_version')
                 row = cur.fetchone()
-            if (row[0] == 1):
+            if row[0] == 1:
                 # Database version 2
                 # Cater for badfiles
                 niceprint('Adding table badfiles to database')
@@ -677,7 +677,7 @@ class Uploadr:
                 cur = con.cursor()
                 cur.execute('PRAGMA user_version')
                 row = cur.fetchone()
-            if (row[0] == 2):
+            if row[0] == 2:
                 niceprint('Database version: [{!s}]'.format(row[0]))
                 # Database version 3
                 # ...for future use!
@@ -733,13 +733,11 @@ class Uploadr:
 
         global nuflickr
 
-        # CODING EXTREME
-
         globalcounter = 0
         curcounter = 0
 
         searchResp = nuflickr.photos.search(user_id="me", per_page=250)
-        if not (self.isGood(searchResp)):
+        if not self.isGood(searchResp):
             sys.exit(-1)
         xfoundpics = searchResp.find('photos').attrib['total']
         xcalcd = int(math.ceil(int(xfoundpics)/250))
@@ -750,7 +748,7 @@ class Uploadr:
 
             print('page=[{!s}]'.format(pg))
             searchResp = nuflickr.photos.search(user_id="me", per_page=250)
-            if not (self.isGood(searchResp)):
+            if not self.isGood(searchResp):
                 break
             niceprint(xml.etree.ElementTree.tostring(
                 searchResp,
@@ -900,7 +898,7 @@ class Uploadr:
 
         respDate = nuflickr.photos.setdates(photo_id=photo_id,
                                             date_taken=datetxt)
-        logging.info('Output for {!s}:'.format('respDate'))
+        logging.info('Output for respDate:')
         logging.info(xml.etree.ElementTree.tostring(
             respDate,
             encoding='utf-8',
@@ -948,10 +946,10 @@ if __name__ == "__main__":
 
     # Debug to show arguments
     if LOGGING_LEVEL <= logging.INFO:
-        logging.info('Pretty Print Output for {!s}'.format('args:'))
+        logging.info('Pretty Print Output for args:')
         pprint.pprint(args)
 
-    logging.warning('FILES_DIR: [{!s}]'.format(FILES_DIR))
+    logging.warning('FILES_DIR: [%s]', FILES_DIR)
     if FILES_DIR == "":
         niceprint('Please configure the name of the folder [FILES_DIR] '
                   'in the INI file [normally deletr.ini], '
