@@ -234,32 +234,6 @@ class Uploadr:
         self.token = self.getCachedToken()
 
     # -------------------------------------------------------------------------
-    # niceprocessedfiles
-    #
-    # Nicely print number of processed files
-    #
-    def niceprocessedfiles(self, count, total):
-        """
-        niceprocessedfiles
-
-        count = Nicely print number of processed files rounded to 100's
-        total = if true shows the total (to be used at the end of processing)
-        """
-
-        if not total:
-            if count % 100 == 0:
-                NPR.niceprint('\t' +
-                              str(count) +
-                              ' files processed (uploaded, md5ed '
-                              'or timestamp checked)')
-        else:
-            if count % 100 > 0:
-                NPR.niceprint('\t' +
-                              str(count) +
-                              ' files processed (uploaded, md5ed '
-                              'or timestamp checked)')
-
-    # -------------------------------------------------------------------------
     # authenticate
     #
     # Authenticates via flickrapi on flickr.com
