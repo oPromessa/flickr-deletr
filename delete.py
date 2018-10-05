@@ -209,7 +209,7 @@ logging.basicConfig(stream=sys.stderr,
 #                                     'INFO UNDER min WARNING LEVEL'))
 if LOGGING_LEVEL <= logging.INFO:
     NPR.niceprint('Output for FLICKR Configuration:\n{!s}'
-                  .format(pprint.pformat(MY_CFG.FLICKR)),
+                  .format(pprint.pformat(FLICKR)),
                   logalso=logging.INFO)    
 
 # =============================================================================
