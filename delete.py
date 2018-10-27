@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 """
     by oPromessa, 2017
@@ -210,10 +209,8 @@ logging.basicConfig(stream=sys.stderr,
 if LOGGING_LEVEL <= logging.INFO:
     NPR.niceprint('Output for FLICKR Configuration:\n{!s}'
                   .format(pprint.pformat(FLICKR)),
-                  logalso=logging.INFO)    
+                  logalso=logging.INFO)
 
-# =============================================================================
-# CODING: Search 'Main code' section for code continuation after definitions
 
 # ----------------------------------------------------------------------------
 # Uploadr class
@@ -799,8 +796,8 @@ class Uploadr:
 
 
 NPR.niceprint('--------- (V' + UPLDR_K.Version + ') Start time: ' +
-          nutime.strftime(UPLDR_K.TimeFormat) +
-          ' ---------')
+              nutime.strftime(UPLDR_K.TimeFormat) +
+              ' ---------')
 if __name__ == "__main__":
     # Ensure that only once instance of this script is running
     f = open(LOCK_PATH, 'w')
@@ -849,8 +846,8 @@ if __name__ == "__main__":
             sys.exit()
 
     if FLICKR["api_key"] == "" or FLICKR["secret"] == "":
-        NPR.niceprint('Please enter an API key and secret in the configuration '
-                      'script file, normaly deletr.ini (see README).')
+        NPR.niceprint('Please enter an API key and secret in the configuration'
+                      ' script file, normaly deletr.ini (see README).')
         sys.exit()
 
     # Instantiate class Uploadr
@@ -871,5 +868,5 @@ if __name__ == "__main__":
     print('i=', i)
 
 NPR.niceprint('--------- (V' + UPLDR_K.Version + ') End time: ' +
-          nutime.strftime(UPLDR_K.TimeFormat) +
-          ' ---------')
+              nutime.strftime(UPLDR_K.TimeFormat) +
+              ' ---------')

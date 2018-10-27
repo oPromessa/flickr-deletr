@@ -363,7 +363,7 @@ class RedactingFormatter(logging.Formatter):
         >>> import lib.NicePrint as npc
         >>> logging.basicConfig(level=logging.WARNING)
         >>> np = npc.NicePrint()
-        >>> patts = (r'(?<=path:\[).+?(?=\])',)
+        >>> patts = (r'(?<=path:\\[).+?(?=\\])',)
         >>> for h in logging.root.handlers:
         ...     h.setFormatter(npc.RedactingFormatter(h.formatter, patts))
         >>> logging.critical('path:[somefile]') # CRITICAL:root:path:[>...<]
