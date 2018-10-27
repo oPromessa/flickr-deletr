@@ -29,7 +29,7 @@ class Konstants:
         >>> Konstants.media_count = 999
         >>> print(Konstants.media_count)
         999
-        >>> print(0 < Konstants.Run < 10000 )
+        >>> print(0 < Konstants.Run < 3415)
         True
     """
 
@@ -44,14 +44,18 @@ class Konstants:
     #
     media_count = None
     TimeFormat = '%Y.%m.%d %H:%M:%S'
-    Run = eval(time.strftime('int("%j")+int("%H")*100+int("%M")*10+int("%S")'))
+    Run = int(time.strftime('%j')) +\
+        int(time.strftime('%H'))*100 +\
+        int(time.strftime('%M'))*10 +\
+        int(time.strftime('%S'))
+
     try:
         if __version__.__version__ is not None:
             Version = __version__.__version__
         else:
-            Version = '2.7.0'
-    except Exception:
-        Version = '2.7.0'
+            Version = '2.0.0-alpha.1'
+    except (AttributeError, LookupError, NameError, TypeError, ValueError):
+        Version = '2.0.0-alpha.1'
 
     # -------------------------------------------------------------------------
     # Color Codes for colorful output
@@ -123,6 +127,24 @@ class Konstants:
         self.etc_ini_file = str('../etc/uploadr.ini')
         self.no_delete_tag = str('nodelete')
         self.upload_sleep = 20  # Normally set to 10.
+
+    # -------------------------------------------------------------------------
+    # class Konstants __rept__
+    #
+    def __repr__(self):
+        """ class Konstants __repr__
+        """
+
+        __rep2return__ = ''
+        for item in sorted([attr for attr in self.__class__.__dict__
+                            if not callable(getattr(self, attr)) and
+                            not attr.startswith("__")]):
+            __rep2return__ += '[{!s:20s}]/type:[{!s:13s}] = [{!s:10s}]\n'\
+                              .format(item,
+                                      type(self.__class__.__dict__[item]),
+                                      self.__class__.__dict__[item])
+
+        return __rep2return__
 
 
 # -----------------------------------------------------------------------------
