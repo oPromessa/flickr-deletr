@@ -19,7 +19,7 @@ dist: xenial
 # env
 env:
   global:
-    - PYTHONPATH=..:.
+    - PYTHONPATH=.:..
     - LC_ALL=en_US.utf8
     - LANG=en_US.utf8
 # Set to -v for Verbose option of deletr
