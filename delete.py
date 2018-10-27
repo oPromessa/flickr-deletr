@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 """
     by oPromessa, 2017
     Published on https://github.com/oPromessa/flickr-deletr/
@@ -27,43 +26,9 @@
     ------------------------------------
     * AVOID using deletr when performing massive other operations on flicr.
 
-    ## Programming Remarks
-    ----------------------
-    * Follow PEP8 coding guidelines. (see http://pep8online.com/checkresult)
-    * If using isThisStringUnicode for (something) if test else (other) make
-      sure to break lines with \ correctly. Be careful.
-    * Use niceprint function to output messages to stdout.
-    * Use logging. for CRITICAL, ERROR, WARNING, INFO, DEBUG messages to stderr
-    * Some ocasional critical messages are generated with sys.stderr.write()
-    * Specific CODING related comments marked with 'CODING'
-    * Prefix coding for some output messages:
-        *****   Section informative
-        ===     Multiprocessing related
-       ++     Exceptions handling related
-    * As far as my testing goes :) the following errors are handled:
-            Flickr reports file not loaded due to error: 5
-                [flickr:Error: 5: Filetype was not recognised]
-                Might as well log such files and marked them not to be loaded
-                again!
-            Database is locked
-            error setting video date
-            error 502: flickrapi
-            error 504: flickrapi
-
     ## README.md
     ------------
     * Check README.md file for (some) more information including:
-
-    ## Description
-    ## Features
-    ## Requirements
-    ## Setup on Synology
-    ## Configuration
-    ## Usage/Arguments/Options
-    ## Task Scheduler (cron)
-    ## Recognition
-    ## Final remarks
-    ## Q&A
 
 """
 # =============================================================================
@@ -88,13 +53,31 @@ try:
     import ConfigParser as ConfigParser  # Python 2
 except ImportError:
     import configparser as ConfigParser  # Python 3
-import flickrapi
 import xml
 import os.path
 import logging
 import pprint
 import math
 
+import flickrapi
+
+# -----------------------------------------------------------------------------
+# Helper class and functions for UPLoaDeR Global Constants.
+import lib.Konstants as KonstantsClass
+# -----------------------------------------------------------------------------
+# Helper class and functions to print messages.
+import lib.NicePrint as NicePrint
+
+
+# =============================================================================
+# Functions aliases
+#
+#   UPLDR_K = Getting definitions from Konstants
+#   NPR     = NicePrint.NicePrint
+# -----------------------------------------------------------------------------
+UPLDR_K = KonstantsClass.Konstants()
+NPR = NicePrint.NicePrint()
+# -----------------------------------------------------------------------------
 
 # =============================================================================
 # Init code
@@ -111,82 +94,12 @@ else:
     LOGGING_LEVEL = logging.WARNING
     sys.stderr.write('--------- ' + 'Init: ' + ' ---------\n')
 
-# ----------------------------------------------------------------------------
-# Constants class
-#
-# List out the constants to be used
-#
-
-
-class UPLDRConstants:
-    """ UPLDRConstants class
-    """
-
-    TimeFormat = '%Y.%m.%d %H:%M:%S'
-    # For future use...
-    # UTF = 'utf-8'
-    Version = '1.0.0'
-
-    def __init__(self):
-        """ Constructor
-        """
-        pass
-
-
-# ----------------------------------------------------------------------------
 # Global Variables
+# ----------------------------------------------------------------------------
 #   nutime      = for working with time module (import time)
 #   nuflickr    = object for flickr API module (import flickrapi)
 nutime = time
 nuflickr = None
-
-# -----------------------------------------------------------------------------
-# isThisStringUnicode
-#
-# Returns true if String is Unicode
-#
-
-
-def isThisStringUnicode(s):
-    """
-    Determines if a string is Unicode (return True) or not (returns False)
-    to allow correct print operations.
-    Example:
-        print(u'File ' + file.encode('utf-8') + u'...') \
-              if isThisStringUnicode(file) else ("File " + file + "...")
-    """
-    if sys.version_info < (3, ):
-        if isinstance(s, unicode):  # noqa
-            return True
-        elif isinstance(s, str):
-            return False
-        else:
-            return False
-    elif isinstance(s, str):
-        return False
-    else:
-        return False
-
-
-# -----------------------------------------------------------------------------
-# niceprint
-#
-# Print a message with the format:
-#   [2017.10.25 22:32:03]:[PRINT   ]:[deletr] Some Message
-#
-def niceprint(s):
-    """
-    Print a message with the format:
-        [2017.10.25 22:32:03]:[PID]:[PRINT   ]:[deletr] Some Message
-        Accounts for UTF-8 Messages
-    """
-    print('[{!s}]:[{!s}][{!s:8s}]:[{!s}] {!s}'.format(
-        nutime.strftime(UPLDRConstants.TimeFormat),
-        os.getpid(),
-        'PRINT',
-        'deletr',
-        s.encode('utf-8') if isThisStringUnicode(s) else s))
-
 
 # =============================================================================
 # Read Config from config.ini file
@@ -198,7 +111,7 @@ INIFiles = config.read(os.path.join(os.path.dirname(sys.argv[0]),
 if not INIFiles:
     sys.stderr.write('[{!s}]:[{!s}][ERROR   ]:[deletr] '
                      'INI file: [{!s}] not found!.\n'
-                     .format(nutime.strftime(UPLDRConstants.TimeFormat),
+                     .format(nutime.strftime(UPLDR_K.TimeFormat),
                              os.getpid(),
                              os.path.join(os.path.dirname(sys.argv[0]),
                                           'deletr.ini')))
@@ -218,7 +131,7 @@ except (ConfigParser.NoOptionError, ConfigParser.NoOptionError) as err:
     sys.stderr.write('[{!s}]:[{!s}][WARNING ]:[deletr] ({!s}) TOKEN_CACHE '
                      'not defined or incorrect on INI file: [{!s}]. '
                      'Assuming default value [{!s}].\n'
-                     .format(nutime.strftime(UPLDRConstants.TimeFormat),
+                     .format(nutime.strftime(UPLDR_K.TimeFormat),
                              os.getpid(),
                              str(err),
                              os.path.join(os.path.dirname(sys.argv[0]),
@@ -265,14 +178,14 @@ if (int(LOGGING_LEVEL) if str.isdigit(LOGGING_LEVEL) else 99) not in [
     sys.stderr.write('[{!s}]:[WARNING ]:[deletr] LOGGING_LEVEL '
                      'not defined or incorrect on INI file: [{!s}]. '
                      'Assuming WARNING level.\n'.format(
-                         nutime.strftime(UPLDRConstants.TimeFormat),
+                         nutime.strftime(UPLDR_K.TimeFormat),
                          os.path.join(os.path.dirname(sys.argv[0]),
                                       "deletr.ini")))
 # Force conversion of LOGGING_LEVEL into int() for later use in conditionals
 LOGGING_LEVEL = int(LOGGING_LEVEL)
 logging.basicConfig(stream=sys.stderr,
                     level=int(LOGGING_LEVEL),
-                    datefmt=UPLDRConstants.TimeFormat,
+                    datefmt=UPLDR_K.TimeFormat,
                     format='[%(asctime)s]:[%(processName)s][%(levelname)-8s]'
                            ':[%(name)s] %(message)s')
 # =============================================================================
@@ -294,20 +207,16 @@ logging.basicConfig(stream=sys.stderr,
 #         logging.info('Message with {!s}'.format(
 #                                     'INFO UNDER min WARNING LEVEL'))
 if LOGGING_LEVEL <= logging.INFO:
-    niceprint('Pretty Print for {!s}'.format(
-        'FLICKR Configuration:'))
-    pprint.pprint(FLICKR)
+    NPR.niceprint('Output for FLICKR Configuration:\n{!s}'
+                  .format(pprint.pformat(FLICKR)),
+                  logalso=logging.INFO)
 
-# =============================================================================
-# CODING: Search 'Main code' section for code continuation after definitions
 
 # ----------------------------------------------------------------------------
 # Uploadr class
 #
 #   Main class for uploading of files.
 #
-
-
 class Uploadr:
     """ Uploadr class
     """
@@ -320,32 +229,6 @@ class Uploadr:
         """ Constructor
         """
         self.token = self.getCachedToken()
-
-    # -------------------------------------------------------------------------
-    # niceprocessedfiles
-    #
-    # Nicely print number of processed files
-    #
-    def niceprocessedfiles(self, count, total):
-        """
-        niceprocessedfiles
-
-        count = Nicely print number of processed files rounded to 100's
-        total = if true shows the total (to be used at the end of processing)
-        """
-
-        if not total:
-            if (count % 100 == 0):
-                niceprint('\t' +
-                          str(count) +
-                          ' files processed (uploaded, md5ed '
-                          'or timestamp checked)')
-        else:
-            if (count % 100 > 0):
-                niceprint('\t' +
-                          str(count) +
-                          ' files processed (uploaded, md5ed '
-                          'or timestamp checked)')
 
     # -------------------------------------------------------------------------
     # authenticate
@@ -363,7 +246,7 @@ class Uploadr:
                                        FLICKR["secret"],
                                        token_cache_location=TOKEN_CACHE)
         # Get request token
-        niceprint('Getting new token.')
+        NPR.niceprint('Getting new token.')
         nuflickr.get_request_token(oauth_callback='oob')
 
         # Show url. Copy and paste it in your browser
@@ -379,16 +262,16 @@ class Uploadr:
             else input('Verifier code (NNN-NNN-NNN): ')
 
         if LOGGING_LEVEL <= logging.WARNING:
-            logging.warning('Verifier: {!s}'.format(verifier))
+            logging.warning('Verifier: %s', verifier)
 
         # Trade the request token for an access token
         print(nuflickr.get_access_token(verifier))
 
         if LOGGING_LEVEL <= logging.WARNING:
-            logging.critical('{!s} with {!s} permissions: {!s}'.format(
-                'Check Authentication',
-                'delete',
-                nuflickr.token_valid(perms='delete')))
+            logging.critical('%s with %s permissions: %s',
+                             'Check Authentication',
+                             'delete',
+                             nuflickr.token_valid(perms='delete'))
             logging.critical('Token Cache: %s', nuflickr.token_cache.token)
 
     # -------------------------------------------------------------------------
@@ -404,7 +287,7 @@ class Uploadr:
         global nuflickr
 
         logging.info('Obtaining Cached token')
-        logging.debug('TOKEN_CACHE:[{!s}]'.format(TOKEN_CACHE))
+        logging.debug('TOKEN_CACHE:[%s]', TOKEN_CACHE)
         nuflickr = flickrapi.FlickrAPI(FLICKR["api_key"],
                                        FLICKR["secret"],
                                        token_cache_location=TOKEN_CACHE)
@@ -414,14 +297,14 @@ class Uploadr:
             # if permissions are correct?
             if nuflickr.token_valid(perms='delete'):
                 if LOGGING_LEVEL <= logging.INFO:
-                    logging.info('Cached token obtained: {!s}'
-                                 .format(nuflickr.token_cache.token))
+                    logging.info('Cached token obtained: %',
+                                 nuflickr.token_cache.token)
                 return nuflickr.token_cache.token
             else:
                 logging.info('Token Non-Existant.')
                 return None
         except BaseException:
-            niceprint('Unexpected error:' + sys.exc_info()[0])
+            NPR.niceprint('Unexpected error:' + sys.exc_info()[0])
             raise
 
     # -------------------------------------------------------------------------
@@ -441,10 +324,10 @@ class Uploadr:
         """
         global nuflickr
 
-        logging.warning('checkToken is (self.token is None):[{!s}]'
-                        .format(self.token is None))
+        logging.warning('checkToken is (self.token is None):[%s]',
+                        self.token is None)
 
-        if (self.token is None):
+        if self.token is None:
             return False
         else:
             nuflickr = flickrapi.FlickrAPI(FLICKR["api_key"],
@@ -470,12 +353,12 @@ class Uploadr:
             if not exists, delete photo from fickr (flickr.photos.delete.html)
         """
 
-        niceprint('*****Removing deleted files*****')
+        NPR.niceprint('*****Removing deleted files*****')
 
         # XXX MSP Changed from self to flick
-        # if (not self.checkToken()):
+        # if not self.checkToken():
         #     self.authenticate()
-        if (not flick.checkToken()):
+        if not flick.checkToken():
             flick.authenticate()
         con = lite.connect(DB_PATH)
         con.text_factory = str
@@ -485,24 +368,24 @@ class Uploadr:
             cur.execute("SELECT files_id, path FROM files")
             rows = cur.fetchall()
 
-            niceprint(str(len(rows)) + ' will be checked for Removal...')
+            NPR.niceprint(str(len(rows)) + ' will be checked for Removal...')
 
             count = 0
             for row in rows:
-                if (not os.path.isfile(row[1].decode('utf-8'))):
+                if not os.path.isfile(row[1].decode('utf-8')):
                     success = self.deleteFile(row, cur)
-                    logging.warning('deleteFile result: {!s}'.format(success))
+                    logging.warning('deleteFile result: %s', success)
                     count = count + 1
-                    if (count % 3 == 0):
-                        niceprint('\t' + str(count) + ' files removed...')
-            if (count % 100 > 0):
-                niceprint('\t' + str(count) + ' files removed.')
+                    if count % 3 == 0:
+                        NPR.niceprint('\t' + str(count) + ' files removed...')
+            if count % 100 > 0:
+                NPR.niceprint('\t' + str(count) + ' files removed.')
 
         # Closing DB connection
         if con is not None:
             con.close()
 
-        niceprint('*****Completed deleted files*****')
+        NPR.niceprint('*****Completed deleted files*****')
 
     # -------------------------------------------------------------------------
     # deletefile
@@ -522,23 +405,23 @@ class Uploadr:
 
         if args.dry_run:
             print(u'Deleting file: ' + file[1].encode('utf-8')) \
-                if isThisStringUnicode(file[1]) \
+                if NPR.niceprint(file[1]) \
                 else ("Deleting file: " + file[1])
             return True
 
         success = False
-        niceprint('Deleting file: ' + file[1].encode('utf-8')) \
-            if isThisStringUnicode(file[1]) \
+        NPR.niceprint('Deleting file: ' + file[1].encode('utf-8')) \
+            if NPR.niceprint(file[1]) \
             else ('Deleting file: ' + file[1])
         try:
             deleteResp = nuflickr.photos.delete(
                 photo_id=str(file[0]))
-            logging.info('Output for {!s}:'.format('deleteResp'))
+            logging.info('Output for deleteResp:')
             logging.info(xml.etree.ElementTree.tostring(
                 deleteResp,
                 encoding='utf-8',
                 method='xml'))
-            if (self.isGood(deleteResp)):
+            if self.isGood(deleteResp):
                 # Find out if the file is the last item in a set, if so,
                 # remove the set from the local db
                 cur.execute("SELECT set_id FROM files WHERE files_id = ?",
@@ -547,17 +430,17 @@ class Uploadr:
                 cur.execute("SELECT set_id FROM files WHERE set_id = ?",
                             (row[0],))
                 rows = cur.fetchall()
-                if (len(rows) == 1):
-                    niceprint('File is the last of the set, '
-                              'deleting the set ID: ' + str(row[0]))
+                if len(rows) == 1:
+                    NPR.niceprint('File is the last of the set, '
+                                  'deleting the set ID: ' + str(row[0]))
                     cur.execute("DELETE FROM sets WHERE set_id = ?", (row[0],))
 
                 # Delete file record from the local db
                 cur.execute("DELETE FROM files WHERE files_id = ?", (file[0],))
-                niceprint("Successful deletion.")
+                NPR.niceprint("Successful deletion.")
                 success = True
             else:
-                if (res['code'] == 1):
+                if res['code'] == 1:
                     # File already removed from Flicker
                     cur.execute("DELETE FROM files WHERE files_id = ?",
                                 (file[0],))
@@ -577,9 +460,9 @@ class Uploadr:
 
             Returns true if attrib['stat'] == "ok" for a given XML object
         """
-        if (res is None):
+        if res is None:
             return False
-        elif (not res == "" and res.attrib['stat'] == "ok"):
+        elif not res == "" and res.attrib['stat'] == "ok":
             return True
         else:
             return False
@@ -607,14 +490,15 @@ class Uploadr:
         """
 
         logging.warning('Running in Daemon mode.')
-        while (True):
-            niceprint('Running in Daemon mode. Execute at [{!s}].'
-                      .format(nutime.strftime(UPLDRConstants.TimeFormat)))
+        while True:
+            NPR.niceprint('Running in Daemon mode. Execute at [{!s}].'
+                          .format(nutime.strftime(UPLDR_K.TimeFormat)))
             # run upload
             self.upload()
-            niceprint("Last check: " + str(nutime.asctime(time.localtime())))
-            logging.warning('Running in Daemon mode. Sleep [{!s}] seconds.'
-                            .format(SLEEP_TIME))
+            NPR.niceprint('Last check: {!s}'
+                          .format(nutime.asctime(time.localtime())))
+            logging.warning('Running in Daemon mode. Sleep [%s] seconds.',
+                            SLEEP_TIME)
             nutime.sleep(SLEEP_TIME)
 
     # -------------------------------------------------------------------------
@@ -628,7 +512,7 @@ class Uploadr:
 
             Creates the control database
         """
-        niceprint('Setting up the database: ' + DB_PATH)
+        NPR.niceprint('Setting up the database: ' + DB_PATH)
         con = None
         try:
             con = lite.connect(DB_PATH)
@@ -651,9 +535,9 @@ class Uploadr:
             cur = con.cursor()
             cur.execute('PRAGMA user_version')
             row = cur.fetchone()
-            if (row[0] == 0):
+            if row[0] == 0:
                 # Database version 1
-                niceprint('Adding last_modified column to database')
+                NPR.niceprint('Adding last_modified column to database')
                 cur = con.cursor()
                 cur.execute('PRAGMA user_version="1"')
                 cur.execute('ALTER TABLE files ADD COLUMN last_modified REAL')
@@ -662,10 +546,10 @@ class Uploadr:
                 cur = con.cursor()
                 cur.execute('PRAGMA user_version')
                 row = cur.fetchone()
-            if (row[0] == 1):
+            if row[0] == 1:
                 # Database version 2
                 # Cater for badfiles
-                niceprint('Adding table badfiles to database')
+                NPR.niceprint('Adding table badfiles to database')
                 cur.execute('PRAGMA user_version="2"')
                 cur.execute('CREATE TABLE IF NOT EXISTS badfiles '
                             '(files_id INTEGER PRIMARY KEY AUTOINCREMENT, '
@@ -677,20 +561,20 @@ class Uploadr:
                 cur = con.cursor()
                 cur.execute('PRAGMA user_version')
                 row = cur.fetchone()
-            if (row[0] == 2):
-                niceprint('Database version: [{!s}]'.format(row[0]))
+            if row[0] == 2:
+                NPR.niceprint('Database version: [{!s}]'.format(row[0]))
                 # Database version 3
                 # ...for future use!
             # Closing DB connection
             if con is not None:
                 con.close()
         except lite.Error as e:
-            niceprint("setup DB Error: %s" % e.args[0])
+            NPR.niceprint("setup DB Error: %s" % e.args[0])
             if con is not None:
                 con.close()
             sys.exit(1)
         finally:
-            niceprint('Completed database setup')
+            NPR.niceprint('Completed database setup')
 
     # -------------------------------------------------------------------------
     # md5Checksum
@@ -733,13 +617,11 @@ class Uploadr:
 
         global nuflickr
 
-        # CODING EXTREME
-
         globalcounter = 0
         curcounter = 0
 
         searchResp = nuflickr.photos.search(user_id="me", per_page=250)
-        if not (self.isGood(searchResp)):
+        if not self.isGood(searchResp):
             sys.exit(-1)
         xfoundpics = searchResp.find('photos').attrib['total']
         xcalcd = int(math.ceil(int(xfoundpics)/250))
@@ -750,9 +632,9 @@ class Uploadr:
 
             print('page=[{!s}]'.format(pg))
             searchResp = nuflickr.photos.search(user_id="me", per_page=250)
-            if not (self.isGood(searchResp)):
+            if not self.isGood(searchResp):
                 break
-            niceprint(xml.etree.ElementTree.tostring(
+            NPR.niceprint(xml.etree.ElementTree.tostring(
                 searchResp,
                 encoding='utf-8',
                 method='xml'))
@@ -777,11 +659,10 @@ class Uploadr:
                 try:
                     deleteResp = nuflickr.photos.delete(
                         photo_id=str(a.attrib['id']))
-                    niceprint(
-                        'DELETE_result:[{!s}]'.format(
-                            self.isGood(deleteResp)))
+                    NPR.niceprint('DELETE_result:[{!s}]'
+                                  .format(self.isGood(deleteResp)))
                 except BaseException:
-                    niceprint('+++ #99 Caught an exception')
+                    NPR.niceprint('+++ #99 Caught an exception')
                     print(str(sys.exc_info()))
                 globalcounter += 1
                 curcounter += 1
@@ -793,15 +674,15 @@ class Uploadr:
             print('next page:[{!s}]'.format(pg))
 
         tot = None
-        id = None
+        idpic = None
         if self.isGood(searchResp):
             if int(searchResp.find('photos').attrib['total']) == 0:
                 tot = int(searchResp.find('photos').attrib['total'])
                 if int(searchResp.find('photos').attrib['total']) == 1:
-                    id = searchResp.find('photos').findall(
+                    idpic = searchResp.find('photos').findall(
                         'photo')[0].attrib['id']
 
-        return (searchResp, tot, id)
+        return (searchResp, tot, idpic)
 
     # -------------------------------------------------------------------------
     # people_get_photos
@@ -900,7 +781,7 @@ class Uploadr:
 
         respDate = nuflickr.photos.setdates(photo_id=photo_id,
                                             date_taken=datetxt)
-        logging.info('Output for {!s}:'.format('respDate'))
+        logging.info('Output for respDate:')
         logging.info(xml.etree.ElementTree.tostring(
             respDate,
             encoding='utf-8',
@@ -914,9 +795,9 @@ class Uploadr:
 # nutime = time
 
 
-niceprint('--------- (V' + UPLDRConstants.Version + ') Start time: ' +
-          nutime.strftime(UPLDRConstants.TimeFormat) +
-          ' ---------')
+NPR.niceprint('--------- (V' + UPLDR_K.Version + ') Start time: ' +
+              nutime.strftime(UPLDR_K.TimeFormat) +
+              ' ---------')
 if __name__ == "__main__":
     # Ensure that only once instance of this script is running
     f = open(LOCK_PATH, 'w')
@@ -926,7 +807,7 @@ if __name__ == "__main__":
         if e.errno == errno.EAGAIN:
             sys.stderr.write('[{!s}] Script already running.\n'
                              .format(
-                                 nutime.strftime(UPLDRConstants.TimeFormat)))
+                                 nutime.strftime(UPLDR_K.TimeFormat)))
             sys.exit(-1)
         raise
     parser = argparse.ArgumentParser(
@@ -948,25 +829,25 @@ if __name__ == "__main__":
 
     # Debug to show arguments
     if LOGGING_LEVEL <= logging.INFO:
-        logging.info('Pretty Print Output for {!s}'.format('args:'))
+        logging.info('Pretty Print Output for args:')
         pprint.pprint(args)
 
-    logging.warning('FILES_DIR: [{!s}]'.format(FILES_DIR))
+    logging.warning('FILES_DIR: [%s]', FILES_DIR)
     if FILES_DIR == "":
-        niceprint('Please configure the name of the folder [FILES_DIR] '
-                  'in the INI file [normally deletr.ini], '
-                  'with media available to sync with Flickr.')
+        NPR.niceprint('Please configure the name of the folder [FILES_DIR] '
+                      'in the INI file [normally deletr.ini], '
+                      'with media available to sync with Flickr.')
         sys.exit()
     else:
         if not os.path.isdir(FILES_DIR):
-            niceprint('Please configure the name of an existant folder '
-                      'in the INI file [normally deletr.ini] '
-                      'with media available to sync with Flickr.')
+            NPR.niceprint('Please configure the name of an existant folder '
+                          'in the INI file [normally deletr.ini] '
+                          'with media available to sync with Flickr.')
             sys.exit()
 
     if FLICKR["api_key"] == "" or FLICKR["secret"] == "":
-        niceprint('Please enter an API key and secret in the configuration '
-                  'script file, normaly deletr.ini (see README).')
+        NPR.niceprint('Please enter an API key and secret in the configuration'
+                      ' script file, normaly deletr.ini (see README).')
         sys.exit()
 
     # Instantiate class Uploadr
@@ -976,7 +857,7 @@ if __name__ == "__main__":
     # Setup the database
     flick.setupDB()
 
-    niceprint("Checking if token is available... if not will authenticate")
+    NPR.niceprint("Checking if token is available... if not will authenticate")
     if not flick.checkToken():
         flick.authenticate()
 
@@ -986,6 +867,6 @@ if __name__ == "__main__":
     print('t=', t)
     print('i=', i)
 
-niceprint('--------- (V' + UPLDRConstants.Version + ') End time: ' +
-          nutime.strftime(UPLDRConstants.TimeFormat) +
-          ' ---------')
+NPR.niceprint('--------- (V' + UPLDR_K.Version + ') End time: ' +
+              nutime.strftime(UPLDR_K.TimeFormat) +
+              ' ---------')
